@@ -2,7 +2,7 @@ name: Run Python Script Every Minute
 
 on:
   schedule:
-    - cron: "*/5 * * * *"  # This means every minute
+    - cron: "*/15 * * * *"  # This means every minute
   workflow_dispatch:  # Allows manual trigger in the Actions tab
 
 jobs:
