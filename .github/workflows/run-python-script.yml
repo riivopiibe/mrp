@@ -1,14 +1,14 @@
-name: Run Python Script Every Minute
+name: Run Sitemap Scraper
 
 on:
   schedule:
-    - cron: "*/15 * * * *"  # This means every minute
-  workflow_dispatch:  # Allows manual trigger in the Actions tab
+    - cron: "*/15 * * * *"  # Adjust as needed
+  workflow_dispatch:       # Allow manual runs
 
 jobs:
-  run-python:
+  scrape-and-update:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -16,7 +16,14 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'  # Use the desired Python version
+          python-version: '3.x'
 
-      - name: Run Python Script
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4 gspread oauth2client
+
+      - name: Run Scraper
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: credentials.json
         run: python refresh_products.py
