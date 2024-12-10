@@ -2,7 +2,7 @@ name: Run Python Script Every Minute
 
 on:
   schedule:
-    - cron: "*/1 * * * *"  # This means every minute
+    - cron: "*/5 * * * *"  # This means every minute
   workflow_dispatch:  # Allows manual trigger in the Actions tab
 
 jobs:
@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'  # Use the desired Python version
+          python-version: '3.x'  # Use the desired Python version
 
       - name: Run Python Script
         run: python hello.py
