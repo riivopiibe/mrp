@@ -22,20 +22,16 @@ def scrape_sitemap(url):
     debug(f"Fetching sitemap from {url}...")
     response = requests.get(url)
     response.raise_for_status()
-    soup = BeautifulSoup(response.content, 'html.parser')
+    soup = BeautifulSoup(response.content, 'lxml')  # Use XML parser
     products = []
-    rows = soup.find_all('tr')
 
     debug("Parsing products...")
-    for row in rows:
-        link = row.find('a', href=True)
-        date = row.find('div', class_='date')
-        time = row.find('div', class_='time')
-        
-        if link and date and time:
-            product_url = link['href']
-            modified_datetime = f"{date.text.strip()} {time.text.strip()}"
-            products.append((product_url, modified_datetime))
+    for url in soup.find_all('url'):
+        loc = url.find('loc').text if url.find('loc') else None
+        lastmod = url.find('lastmod').text if url.find('lastmod') else None
+
+        if loc and lastmod:
+            products.append((loc, lastmod))
     
     debug(f"Found {len(products)} products.")
     return products
