@@ -2,7 +2,7 @@ name: Run Sitemap Scraper
 
 on:
   schedule:
-    - cron: "*/15 * * * *"  # Adjust as needed
+    - cron: "0 5 * * *"  # Adjust as needed, 15min - "*/15 * * * *"; Run at 5:00 AM every day (UTC time) - "0 5 * * *"
   workflow_dispatch:       # Allow manual runs
 
 jobs:
