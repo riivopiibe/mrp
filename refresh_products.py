@@ -14,7 +14,7 @@ def setup_sheets():
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope)
     client = gspread.authorize(creds)
-    sheet = client.open("Your Google Sheet Name").sheet1
+    sheet = client.open("Motorott products").sheet1
     return sheet
 
 # Scrape sitemap
