@@ -19,4 +19,4 @@ jobs:
           python-version: '3.x'  # Use the desired Python version
 
       - name: Run Python Script
-        run: python hello.py
+        run: python refresh_products.py
