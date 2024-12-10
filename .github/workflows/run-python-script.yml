@@ -18,6 +18,10 @@ jobs:
         with:
           python-version: '3.x'
 
+      # Decrypt and write the credentials.json file
+      - name: Create credentials.json
+        run: echo "${{ secrets.CREDENTIALS_JSON }}" > credentials.json
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
