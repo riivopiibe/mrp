@@ -1,23 +1,43 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import os
+import base64
 import json
 
-# Google Sheets API setup
-def fetch_data_from_google_sheets(sheet_url, credentials_path):
-    # Set up the credentials
-    scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-    credentials = ServiceAccountCredentials.from_json_keyfile_name(credentials_path, scope)
-    client = gspread.authorize(credentials)
+# Debug function (optional for logging)
+def debug(message):
+    print(f"[DEBUG] {message}")
 
-    # Open the Google Sheet
-    spreadsheet = client.open_by_url(sheet_url)
-    worksheet = spreadsheet.sheet1
-    data = worksheet.get_all_records()
+# Google Sheets Setup
+def setup_sheets():
+    debug("Setting up Google Sheets API...")
+    
+    # Decode credentials from environment variable
+    credentials_content = os.getenv("CREDENTIALS_JSON")
+    if not credentials_content:
+        raise ValueError("Environment variable CREDENTIALS_JSON is not set.")
+    
+    decoded_credentials = base64.b64decode(credentials_content).decode("utf-8")
+    credentials_dict = json.loads(decoded_credentials)
+
+    # Authenticate Google Sheets
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
+    client = gspread.authorize(creds)
+
+    # Open Google Sheets by name
+    sheet = client.open("Motorott products").sheet1  # Replace with your sheet's name
+    return sheet
+
+# Fetch data from Google Sheets
+def fetch_data_from_google_sheets(sheet):
+    debug("Fetching data from Google Sheets...")
+    data = sheet.get_all_records()
     return data
 
-# Format the text file
+# Format data into a text file
 def format_data_to_txt(data, output_path):
+    debug(f"Formatting data to {output_path}...")
     lines = []
     for row in data:
         lines.append(f"Title: {row['Title']}")
@@ -29,32 +49,19 @@ def format_data_to_txt(data, output_path):
     # Write to file
     with open(output_path, "w", encoding="utf-8") as file:
         file.write("\n".join(lines))
+    debug("Data formatted successfully!")
 
 if __name__ == "__main__":
-    # Replace with your Google Sheets URL
-    sheet_url = os.getenv("SHEET_URL")
-    credentials_content = os.getenv("CREDENTIALS_JSON")
-
-    # Write credentials to a temporary file
-    temp_credentials_path = "credentials.json"
-    if not credentials_content:
-        raise ValueError("Environment variable CREDENTIALS_JSON is not set.")
+    debug("Starting script...")
+    
     try:
-        json.loads(credentials_content)  # Validate JSON content
-    except json.JSONDecodeError:
-        raise ValueError("Invalid JSON format in CREDENTIALS_JSON.")
-
-    with open(temp_credentials_path, "w") as temp_file:
-        temp_file.write(credentials_content)
-
-    # Output file location
-    output_file = "data.txt"
-
-    try:
-        # Fetch data and format
-        data = fetch_data_from_google_sheets(sheet_url, temp_credentials_path)
+        # Set up Google Sheets API
+        sheet = setup_sheets()
+        
+        # Fetch and format data
+        data = fetch_data_from_google_sheets(sheet)
+        output_file = "data.txt"
         format_data_to_txt(data, output_file)
-        print(f"Updated {output_file}")
-    finally:
-        # Remove the temporary credentials file
-        os.remove(temp_credentials_path)
+        debug(f"Data saved to {output_file}")
+    except Exception as e:
+        print(f"[ERROR] {e}")
