@@ -20,7 +20,8 @@ jobs:
 
       # Decrypt and write the credentials.json file
       - name: Create credentials.json
-        run: echo "${{ secrets.CREDENTIALS_JSON }}" > credentials.json
+        run: |
+          echo "${{ secrets.CREDENTIALS_JSON }}" | sed 's/\\n/\/g' > credentials.json
 
       - name: Install dependencies
         run: |
