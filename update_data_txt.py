@@ -33,7 +33,7 @@ def format_data_to_txt(data, output_path):
 if __name__ == "__main__":
     # Replace with your Google Sheets URL
     sheet_url = os.getenv("SHEET_URL")
-    credentials_content = os.getenv("CREDENTIALS_JSON")
+    credentials_content = os.getenv("GOOGLE_SHEETS_CREDENTIALS")
 
     # Write credentials to a temporary file
     temp_credentials_path = "credentials.json"
