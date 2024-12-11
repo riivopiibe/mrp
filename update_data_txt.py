@@ -1,7 +1,6 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import os
-import base64
 import json
 
 # Debug function (optional for logging)
@@ -16,13 +15,10 @@ def setup_sheets():
     credentials_content = os.getenv("CREDENTIALS_JSON")
     if not credentials_content:
         raise ValueError("Environment variable CREDENTIALS_JSON is not set.")
-    
-    decoded_credentials = base64.b64decode(credentials_content).decode("utf-8")
-    credentials_dict = json.loads(decoded_credentials)
 
     # Authenticate Google Sheets
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_content, scope)
     client = gspread.authorize(creds)
 
     # Open Google Sheets by name
