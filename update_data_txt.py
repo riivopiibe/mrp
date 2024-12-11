@@ -1,13 +1,13 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import os
-import datetime
+import json
 
 # Google Sheets API setup
-def fetch_data_from_google_sheets(sheet_url):
+def fetch_data_from_google_sheets(sheet_url, credentials_path):
     # Set up the credentials
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-    credentials = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope)
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(credentials_path, scope)
     client = gspread.authorize(credentials)
 
     # Open the Google Sheet
@@ -32,11 +32,22 @@ def format_data_to_txt(data, output_path):
 
 if __name__ == "__main__":
     # Replace with your Google Sheets URL
-    sheet_url = "https://docs.google.com/spreadsheets/d/1CmuKdsDSH5Qj1c51145bn6UTckIwLgZnpcnGW7kTRGQ/edit?usp=sharing"
+    sheet_url = os.getenv("SHEET_URL")
+    credentials_content = os.getenv("CREDENTIALS_JSON")
+
+    # Write credentials to a temporary file
+    temp_credentials_path = "credentials.json"
+    with open(temp_credentials_path, "w") as temp_file:
+        temp_file.write(credentials_content)
+
     # Output file location
     output_file = "data.txt"
 
-    # Fetch data and format
-    data = fetch_data_from_google_sheets(sheet_url)
-    format_data_to_txt(data, output_file)
-    print(f"Updated {output_file}")
+    try:
+        # Fetch data and format
+        data = fetch_data_from_google_sheets(sheet_url, temp_credentials_path)
+        format_data_to_txt(data, output_file)
+        print(f"Updated {output_file}")
+    finally:
+        # Remove the temporary credentials file
+        os.remove(temp_credentials_path)
