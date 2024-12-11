@@ -26,7 +26,7 @@ jobs:
     - name: Run Python script to update data.txt
       env:
         SHEET_URL: ${{ secrets.SHEET_URL }}
-        GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.CREDENTIALS_JSON }}
+        GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
       run: |
         python update_data_txt.py
 
