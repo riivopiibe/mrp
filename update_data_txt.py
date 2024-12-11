@@ -33,10 +33,17 @@ def format_data_to_txt(data, output_path):
 if __name__ == "__main__":
     # Replace with your Google Sheets URL
     sheet_url = os.getenv("SHEET_URL")
-    credentials_content = os.getenv("GOOGLE_SHEETS_CREDENTIALS")
+    credentials_content = os.getenv("CREDENTIALS_JSON")
 
     # Write credentials to a temporary file
     temp_credentials_path = "credentials.json"
+    if not credentials_content:
+        raise ValueError("Environment variable CREDENTIALS_JSON is not set.")
+    try:
+        json.loads(credentials_content)  # Validate JSON content
+    except json.JSONDecodeError:
+        raise ValueError("Invalid JSON format in CREDENTIALS_JSON.")
+
     with open(temp_credentials_path, "w") as temp_file:
         temp_file.write(credentials_content)
 
