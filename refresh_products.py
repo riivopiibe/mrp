@@ -12,8 +12,9 @@ def debug(message):
 # Google Sheets Setup
 def setup_sheets():
     debug("Setting up Google Sheets API...")
+    credentials_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "credentials.json")
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_name(credentials_path, scope)
     client = gspread.authorize(creds)
     sheet = client.open("Motorott products").sheet1
     return sheet
