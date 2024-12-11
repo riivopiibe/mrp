@@ -26,14 +26,15 @@ jobs:
     - name: Run Python script to update data.txt
       env:
         SHEET_URL: ${{ secrets.SHEET_URL }}
-        GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
+        CREDENTIALS_JSON: ${{ secrets.CREDENTIALS_JSON }}  # Corrected environment variable
       run: |
         python update_data_txt.py
 
-    - name: Commit and push changes
+    - name: Push changes to GitHub Pages
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git checkout gh-pages
         git add data.txt
-        git commit -m "Update data.txt"
-        git push
+        git commit -m "Update data.txt for GitHub Pages"
+        git push origin gh-pages
